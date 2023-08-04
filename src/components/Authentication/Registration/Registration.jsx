@@ -2,8 +2,28 @@ import { Link } from "react-router-dom";
 import Container from "../../Shared/Container/Container";
 import { BsArrowLeft } from "react-icons/bs";
 import namasteImg from "../../../assets/namaste.png";
+import { useForm } from "react-hook-form";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../Provider/AuthProvider";
+import { toast } from "react-hot-toast";
 
 const Registration = () => {
+  const { createUserAccount } = useContext(AuthContext);
+  const [success, setSuccess] = useState("");
+
+  const { register, handleSubmit, reset } = useForm();
+
+  const onSubmit = (data) => {
+    // console.log(data);
+    createUserAccount(data.email, data.password)
+      .then(() => {
+        toast.success("User created successully..!");
+        setSuccess("User created successully..!");
+        reset();
+      })
+      .catch((error) => toast.error(error.message));
+  };
+
   return (
     <Container>
       <Link to="/chathome">
@@ -25,11 +45,11 @@ const Registration = () => {
           Enter your details and dive into a realm of ancient wishdom!
         </p>
       </div>
-      <form className="md:w-1/3 mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="md:w-1/3 mx-auto">
         <div className="relative mt-6">
           <input
             type="text"
-            name="name"
+            {...register("name", { required: true })}
             placeholder="Your name"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
@@ -40,7 +60,7 @@ const Registration = () => {
         <div className="relative mt-6">
           <input
             type="email"
-            name="email"
+            {...register("email", { required: true })}
             placeholder="Your email"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
@@ -51,7 +71,7 @@ const Registration = () => {
         <div className="relative mt-6">
           <input
             type="password"
-            name="password"
+            {...register("password", { required: true })}
             placeholder="Password"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
@@ -62,7 +82,7 @@ const Registration = () => {
         <div className="relative mt-6">
           <input
             type="password"
-            name="confirm"
+            {...register("confirm", { required: true })}
             placeholder="Confirm Password"
             className="peer mt-1 w-full border-b-2 border-gray-300 px-0 py-1 placeholder:text-transparent focus:border-gray-500 focus:outline-none"
           />
@@ -70,6 +90,7 @@ const Registration = () => {
             Confirm Password
           </label>
         </div>
+        <p className="text-green-600 font-bold">{success}</p>
         <div className="space-y-2 my-10">
           <button className="bg-[#FFC746] text-pink-900 font-semibold w-full p-2 rounded-xl shadow-lg">
             Create an account
